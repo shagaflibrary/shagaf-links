@@ -1,1 +1,13 @@
 
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.example.shagaf",
+      "sha256_cert_fingerprints": [
+        "9B:C6:71:C9:8E:75:E4:F3:CA:DB:21:C1:60:00:0A:F0:B8:46:51:C1:D8:0C:CE:F8:6E:E5:7D:5C:E7:B6:7D:BA"
+      ]
+    }
+  }
+]
