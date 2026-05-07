@@ -1,2 +1,8 @@
 include:
   - .well-known
+
+plugins:
+  - jekyll-optional-front-matter
+
+exclude:
+  - README.md
