@@ -320,12 +320,11 @@
     // ────────────────────────────────────────────────────────────────────
 
     // Handle both direct paths and redirected paths from 404.html
-    const redirected = new URLSearchParams(window.location.search).get('p');
-    const parsedPath = redirected ? decodeURIComponent(redirected) : window.location.pathname;
+   
     const params = new URLSearchParams(window.location.search);
-    const screen = parsedPath.replace('/ziarat/', '') !== parsedPath 
-    ? 'ziarat/' + parsedPath.split('/ziarat/')[1] 
-    : params.get('screen') || '';
+    const ziaraId = params.get('ziarat') || '';
+    const screen = ziaraId ? `ziarat/${ziaraId}` : '';
+
     const deepLinkUrl = screen
       ? `${APP_SCHEME}://${screen}`
       : `${APP_SCHEME}://`;
