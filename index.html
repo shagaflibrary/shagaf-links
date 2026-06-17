@@ -1,399 +1,409 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shagaf</title>
+  <title>شگف</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Neue+Haas+Grotesk+Display+Pro:wght@400;500&family=Rajdhani:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet" />
   <style>
+    /* ═══════════════════════════════════════════════════
+       SHAGAF LANDING PAGE — YOUTUBE REDIRECTOR
+       ───────────────────────────────────────────────────
+       TO UPDATE YOUTUBE LINKS:
+       Find the `ziarats` object in the <script> below.
+       Each entry has a `youtube` field.
+       Replace any 'PLACEHOLDER_...' value with the
+       real YouTube URL, e.g.:
+       youtube: 'https://www.youtube.com/watch?v=XXXXXXXXXXX'
+    ═══════════════════════════════════════════════════ */
+
     :root {
-      --ink:       #0e0e0e;
-      --paper:     #f5f0e8;
-      --gold:      #c9a84c;
-      --gold-dim:  #a07c2e;
-      --mist:      #d8d0c0;
-      --red:       #b03a2e;
+      --ink:        #0b0b0b;
+      --paper:      #f2ece0;
+      --gold:       #c9a84c;
+      --gold-dim:   #8a6f2e;
+      --mist:       #c8bfad;
+      --red:        #7d1a0f;
+      --card-bg:    rgba(255,255,255,0.03);
+      --border:     rgba(201,168,76,0.15);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html, body {
-      height: 100%;
+    html { scroll-behavior: smooth; }
+
+    body {
       background: var(--ink);
       color: var(--paper);
-      font-family: 'Rajdhani', sans-serif;
-      overflow: hidden;
+      font-family: 'Tajawal', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      overflow-x: hidden;
     }
 
-    /* ── Grain overlay ── */
+    /* ── Ambient background ── */
     body::before {
       content: '';
       position: fixed; inset: 0; z-index: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-      opacity: 0.04;
+      background:
+        radial-gradient(ellipse 60% 50% at 20% 20%, rgba(201,168,76,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 60% at 80% 80%, rgba(125,26,15,0.08) 0%, transparent 70%);
       pointer-events: none;
     }
 
-    /* ── Ambient glow ── */
-    .glow {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(120px);
+    /* ── Grain ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.035;
       pointer-events: none;
-      z-index: 0;
     }
-    .glow-1 {
-      width: 500px; height: 500px;
-      background: radial-gradient(circle, rgba(201,168,76,0.18) 0%, transparent 70%);
-      top: -100px; left: -100px;
-      animation: drift1 14s ease-in-out infinite alternate;
-    }
-    .glow-2 {
-      width: 400px; height: 400px;
-      background: radial-gradient(circle, rgba(176,58,46,0.12) 0%, transparent 70%);
-      bottom: -80px; right: -80px;
-      animation: drift2 18s ease-in-out infinite alternate;
-    }
-    @keyframes drift1 { to { transform: translate(60px, 80px); } }
-    @keyframes drift2 { to { transform: translate(-60px, -50px); } }
 
-    /* ── Main layout ── */
     .stage {
       position: relative; z-index: 1;
-      height: 100vh;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      padding: 48px 40px 40px;
-      max-width: 520px;
-      margin: 0 auto;
-    }
-
-    /* ── Header ── */
-    header {
-      opacity: 0;
-      animation: fadeUp 0.9s cubic-bezier(0.16,1,0.3,1) 0.1s forwards;
-    }
-    .wordmark {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: clamp(2.6rem, 10vw, 4rem);
-      letter-spacing: 0.18em;
-      color: var(--paper);
-      line-height: 1;
-    }
-    .wordmark span {
-      color: var(--gold);
-    }
-    .tagline {
-      margin-top: 10px;
-      font-size: 0.78rem;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--mist);
-      opacity: 0.7;
-    }
-
-    /* ── Center block ── */
-    .center {
+      width: 100%;
+      max-width: 480px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      align-items: center;
       gap: 0;
     }
 
-    .headline {
+    /* ── Calligraphic rule ── */
+    .rule {
+      width: 1px;
+      height: 60px;
+      background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeIn 1s 0.1s ease forwards;
+    }
+
+    /* ── Wordmark ── */
+    .wordmark {
       font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
       font-weight: 300;
-      font-size: clamp(2rem, 8vw, 3rem);
-      line-height: 1.25;
+      font-size: clamp(3rem, 14vw, 5rem);
+      letter-spacing: 0.22em;
       color: var(--paper);
+      direction: ltr;
+      line-height: 1;
       opacity: 0;
-      animation: fadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.35s forwards;
+      animation: fadeUp 1s 0.2s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .wordmark em {
+      font-style: normal;
+      color: var(--gold);
     }
 
-    .divider {
-      width: 48px; height: 1px;
-      background: var(--gold);
-      margin: 28px 0;
-      opacity: 0;
-      animation: fadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.5s forwards;
-    }
-
-    .body-text {
-      font-size: 1rem;
-      font-weight: 400;
-      line-height: 1.7;
+    .subtitle {
+      margin-top: 10px;
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
       color: var(--mist);
-      max-width: 340px;
       opacity: 0;
-      animation: fadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.65s forwards;
+      direction: ltr;
+      animation: fadeUp 1s 0.35s cubic-bezier(0.16,1,0.3,1) forwards;
     }
 
-    /* ── Status message ── */
-    .status {
-      margin-top: 36px;
+    /* ── Ziara name ── */
+    .ziara-name {
+      margin-top: 48px;
+      font-size: clamp(1.4rem, 5vw, 2rem);
+      font-weight: 400;
+      color: var(--paper);
+      text-align: center;
+      line-height: 1.5;
+      opacity: 0;
+      animation: fadeUp 1s 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+
+    .ziara-label {
+      margin-top: 6px;
       font-size: 0.72rem;
       letter-spacing: 0.22em;
       text-transform: uppercase;
       color: var(--gold);
-      min-height: 1em;
       opacity: 0;
-      animation: fadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.8s forwards;
+      animation: fadeUp 1s 0.6s cubic-bezier(0.16,1,0.3,1) forwards;
     }
 
-    /* ── Buttons ── */
-    .actions {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      margin-top: 32px;
+    /* ── Divider ── */
+    .divider {
+      width: 40px; height: 1px;
+      background: var(--gold);
+      margin: 28px auto;
       opacity: 0;
-      animation: fadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.95s forwards;
+      animation: fadeIn 1s 0.7s ease forwards;
     }
 
-    .btn {
+    /* ── Body text ── */
+    .body-text {
+      font-size: 0.9rem;
+      font-weight: 300;
+      line-height: 1.85;
+      color: var(--mist);
+      text-align: center;
+      max-width: 340px;
+      opacity: 0;
+      animation: fadeUp 1s 0.75s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+
+    /* ── CTA Button ── */
+    .cta-wrap {
+      margin-top: 36px;
+      width: 100%;
+      opacity: 0;
+      animation: fadeUp 1s 0.9s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+
+    .cta-btn {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 12px;
-      padding: 16px 28px;
-      border: none;
-      cursor: pointer;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 500;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      text-decoration: none;
-      transition: transform 0.2s ease, opacity 0.2s ease;
-      border-radius: 2px;
-    }
-    .btn:active { transform: scale(0.97); }
-
-    .btn-primary {
+      width: 100%;
+      padding: 18px 24px;
       background: var(--gold);
       color: var(--ink);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: opacity 0.2s, transform 0.15s;
+      cursor: pointer;
+      border: none;
     }
-    .btn-primary:hover { opacity: 0.88; }
+    .cta-btn:hover { opacity: 0.88; }
+    .cta-btn:active { transform: scale(0.98); }
 
-    .btn-secondary {
-      background: transparent;
-      color: var(--paper);
-      border: 1px solid rgba(245,240,232,0.2);
-    }
-    .btn-secondary:hover { border-color: rgba(245,240,232,0.5); }
+    .cta-btn svg { flex-shrink: 0; }
 
-    .btn svg { flex-shrink: 0; }
-
-    /* ── Desktop fallback ── */
-    .desktop-msg {
-      display: none;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 18px;
-      margin-top: 32px;
-      opacity: 0;
-      animation: fadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.95s forwards;
-    }
-    .desktop-msg p {
+    /* ── Not found state ── */
+    .not-found {
+      margin-top: 36px;
+      padding: 20px 24px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
       font-size: 0.85rem;
       color: var(--mist);
-      line-height: 1.6;
-      letter-spacing: 0.05em;
+      text-align: center;
+      line-height: 1.7;
+      opacity: 0;
+      animation: fadeUp 1s 0.9s cubic-bezier(0.16,1,0.3,1) forwards;
+      display: none;
     }
-    .store-links { display: flex; gap: 14px; flex-wrap: wrap; }
-    .store-link {
-      font-size: 0.75rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--gold);
-      text-decoration: none;
-      border-bottom: 1px solid var(--gold-dim);
-      padding-bottom: 2px;
-      transition: color 0.2s;
+
+    /* ── Default state (no ziarat param) ── */
+    .default-state {
+      margin-top: 36px;
+      text-align: center;
+      opacity: 0;
+      animation: fadeUp 1s 0.9s cubic-bezier(0.16,1,0.3,1) forwards;
+      display: none;
     }
-    .store-link:hover { color: var(--paper); border-color: var(--paper); }
+    .default-state p {
+      font-size: 0.88rem;
+      color: var(--mist);
+      line-height: 1.7;
+    }
 
     /* ── Footer ── */
     footer {
-      opacity: 0;
-      animation: fadeUp 1s cubic-bezier(0.16,1,0.3,1) 1.1s forwards;
+      margin-top: 56px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 12px;
+      opacity: 0;
+      animation: fadeIn 1s 1.1s ease forwards;
     }
-    .footer-line {
-      font-size: 0.7rem;
-      letter-spacing: 0.18em;
+    .footer-text {
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--mist);
-      opacity: 0.4;
+      opacity: 0.35;
+      direction: ltr;
     }
-    .dot {
-      width: 6px; height: 6px;
+    .footer-dot {
+      width: 3px; height: 3px;
       border-radius: 50%;
       background: var(--gold);
-      opacity: 0.5;
+      opacity: 0.4;
     }
 
     /* ── Animations ── */
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(18px); }
+      from { opacity: 0; transform: translateY(16px); }
       to   { opacity: 1; transform: translateY(0); }
     }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
 
-    /* ── Redirect countdown bar ── */
-    .progress-bar {
-      position: fixed;
-      bottom: 0; left: 0;
-      height: 2px;
-      background: var(--gold);
-      width: 0%;
-      transition: width linear;
-      z-index: 10;
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; }
     }
   </style>
 </head>
 <body>
+<div class="stage">
 
-  <div class="glow glow-1"></div>
-  <div class="glow glow-2"></div>
-  <div class="progress-bar" id="progressBar"></div>
+  <div class="rule"></div>
 
-  <div class="stage">
+  <div class="wordmark">SHA<em>G</em>AF</div>
+  <div class="subtitle">Shagaf Library</div>
 
-    <header>
-      <div class="wordmark">SHA<span>G</span>AF</div>
-      <div class="tagline">Your reading companion</div>
-    </header>
+  <div class="ziara-name" id="ziaraName"></div>
+  <div class="ziara-label" id="ziaraLabel"></div>
+  <div class="divider" id="divider" style="display:none"></div>
+  <p class="body-text" id="bodyText"></p>
 
-    <main class="center">
-      <h1 class="headline">Open the app<br>or get it now.</h1>
-      <div class="divider"></div>
-      <p class="body-text">
-        Shagaf is available on iOS and Android.
-        If you have it installed, it will open automatically.
-        Otherwise, download it below.
-      </p>
-
-      <div class="status" id="statusMsg">Checking for the app…</div>
-
-      <!-- Mobile buttons (shown by JS) -->
-      <div class="actions" id="mobileActions" style="display:none;">
-        <a href="#" class="btn btn-primary" id="storeBtn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
-          </svg>
-          <span id="storeBtnLabel">Download Shagaf</span>
-        </a>
-        <a href="#" class="btn btn-secondary" id="openBtn" style="display:none;">
-          Open in Shagaf
-        </a>
-      </div>
-
-      <!-- Desktop fallback -->
-      <div class="desktop-msg" id="desktopMsg" style="display:none;">
-        <p>Shagaf is a mobile app. Scan the QR code or visit the links below on your phone.</p>
-        <div class="store-links">
-          <a href="#PLACEHOLDER_IOS" class="store-link">App Store →</a>
-          <a href="#PLACEHOLDER_ANDROID" class="store-link">Google Play →</a>
-        </div>
-      </div>
-    </main>
-
-    <footer>
-      <span class="footer-line">Shagaf © 2025</span>
-      <div class="dot"></div>
-      <span class="footer-line">All rights reserved</span>
-    </footer>
-
+  <div class="cta-wrap" id="ctaWrap" style="display:none">
+    <a href="#" class="cta-btn" id="ctaBtn" target="_blank" rel="noopener">
+      <!-- YouTube icon -->
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+      </svg>
+      <span id="ctaLabel">شاهد على يوتيوب</span>
+    </a>
   </div>
 
-  <script>
-    // ── CONFIG — replace these when you have real URLs ──────────────────
-    const IOS_STORE_URL     = '#PLACEHOLDER_IOS_STORE';
-    const ANDROID_STORE_URL = '#PLACEHOLDER_ANDROID_STORE';
-    const APP_SCHEME        = 'shagaf';   // e.g. shagaf://
-    // ────────────────────────────────────────────────────────────────────
+  <div class="not-found" id="notFound">
+    هذه الزيارة غير متوفرة حالياً على يوتيوب.<br>
+    تابعونا للمزيد قريباً.
+  </div>
 
-    // Handle both direct paths and redirected paths from 404.html
-   
-    const params = new URLSearchParams(window.location.search);
-    const ziaraId = params.get('ziarat') || '';
-    const screen = ziaraId ? `ziarat/${ziaraId}` : '';
+  <div class="default-state" id="defaultState">
+    <p>مرحباً بكم في مكتبة شگف.<br>اختر زيارة من التطبيق للاستماع.</p>
+  </div>
 
-    const deepLinkUrl = screen
-      ? `${APP_SCHEME}://${screen}`
-      : `${APP_SCHEME}://`;
+  <footer>
+    <span class="footer-text">Shagaf Library</span>
+    <div class="footer-dot"></div>
+    <span class="footer-text">2025</span>
+  </footer>
 
-    const ua       = navigator.userAgent || '';
-    const isIOS    = /iPhone|iPad|iPod/i.test(ua);
-    const isAndroid = /Android/i.test(ua);
-    const isMobile = isIOS || isAndroid;
+</div>
 
-    const statusEl       = document.getElementById('statusMsg');
-    const mobileActions  = document.getElementById('mobileActions');
-    const desktopMsg     = document.getElementById('desktopMsg');
-    const storeBtn       = document.getElementById('storeBtn');
-    const storeBtnLabel  = document.getElementById('storeBtnLabel');
-    const openBtn        = document.getElementById('openBtn');
-    const progressBar    = document.getElementById('progressBar');
+<script>
+  // ═══════════════════════════════════════════════════════════════
+  // YOUTUBE LINKS CONFIG
+  // ───────────────────────────────────────────────────────────────
+  // To update a link: replace the youtube value with the full URL.
+  // To add a new ziarat: add a new entry following the same format.
+  // Placeholder format: 'PLACEHOLDER_[ID]' — search for these to
+  // find which ones still need a real YouTube link.
+  // ═══════════════════════════════════════════════════════════════
+  const ziarats = {
+    'ziarat-warith': {
+      name: 'زيارة وارث',
+      youtube: 'https://youtu.be/F3qqYPijPOQ?si=WXD3btUCnrYBqK7_',
+    },
+    'ziarat-ashura': {
+      name: 'زيارة عاشوراء',
+      youtube: 'https://youtu.be/Pemk3vs4iAI?si=7CtRW332hN3cwRig',
+    },
+    'ziarat-al-yassin': {
+      name: 'زيارة آل ياسين',
+      youtube: 'https://youtu.be/5CWBQ_6S5h8?feature=shared',
+    },
+    'ziarat-al-rasool': {
+      name: 'زيارة الرسول الأعظم',
+      youtube: 'https://youtu.be/9OS5abPp4eM?si=7V4G4Yt9h5yplb5T',
+    },
+    'ziarat-amin-allah': {
+      name: 'زيارة أمين الله',
+      youtube: 'https://youtu.be/Re5dd8hGfVc?si=VHFFNIniTd7Wtv7L',
+    },
+    'ziarat-al-arbaeen': {
+      name: 'زيارة الأربعين',
+      youtube: 'https://youtu.be/IQdltrBP0_E?si=8VSNqnPnhvQedSAu',
+    },
+    'ziarat-fatima-al-zahra': {
+      name: 'زيارة فاطمة الزهراء',
+      youtube: 'https://youtu.be/45UQYs5jQ78?si=qfz0T60GqR1PVyWU',
+    },
+    'ziarat-abi-al-fazl': {
+      name: 'زيارة أبي الفضل',
+      youtube: 'https://youtu.be/af9ruj2861M?si=u9TR076rO69XJZws',
+    },
+    'ziarat-umm-al-banin': {
+      name: 'زيارة أم البنين',
+      youtube: 'https://youtu.be/HB0jhVQZbkU?si=Bp3BY2BZ0NNQ5BN7',
+    },
+    'ziarat-ali-al-akbar': {
+      name: 'زيارة علي الأكبر',
+      youtube: 'https://youtu.be/07iIj3v9BFI?si=GoaLHeAKUpOVMGCr',
+    },
+    'ziarat-habib-ibn-muzahir': {
+      name: 'زيارة حبيب بن مظاهر',
+      youtube: 'PLACEHOLDER_ZIARAT_HABIB_IBN_MUZAHIR',
+    },
+    'ziarat-al-shuhada': {
+      name: 'زيارة الشهداء',
+      youtube: 'PLACEHOLDER_ZIARAT_AL_SHUHADA',
+    },
+    'ziarat-ahl-al-qubur': {
+      name: 'زيارة أهل القبور',
+      youtube: 'PLACEHOLDER_ZIARAT_AHL_AL_QUBUR',
+    },
+  };
+  // ═══════════════════════════════════════════════════════════════
 
-    function showStoreRedirect(storeUrl, label) {
-      statusEl.textContent = `Redirecting you to ${label}…`;
-      storeBtn.href        = storeUrl;
-      storeBtnLabel.textContent = `Get Shagaf on ${label}`;
-      mobileActions.style.display = 'flex';
+  const params  = new URLSearchParams(window.location.search);
+  const id      = params.get('ziarat');
+  const ziara   = id ? ziarats[id] : null;
 
-      // Animate progress bar over 3 seconds then redirect
-      const DELAY = 3000;
-      progressBar.style.transition = `width ${DELAY}ms linear`;
-      requestAnimationFrame(() => { progressBar.style.width = '100%'; });
-      setTimeout(() => { window.location.href = storeUrl; }, DELAY);
-    }
+  const nameEl    = document.getElementById('ziaraName');
+  const labelEl   = document.getElementById('ziaraLabel');
+  const divider   = document.getElementById('divider');
+  const bodyEl    = document.getElementById('bodyText');
+  const ctaWrap   = document.getElementById('ctaWrap');
+  const ctaBtn    = document.getElementById('ctaBtn');
+  const ctaLabel  = document.getElementById('ctaLabel');
+  const notFound  = document.getElementById('notFound');
+  const defState  = document.getElementById('defaultState');
 
-    function tryOpenApp() {
-      statusEl.textContent = 'Opening Shagaf…';
+  if (!id) {
+    // No ziarat param — show default welcome state
+    defState.style.display = 'block';
 
-      // Attempt to open via URI scheme
-      const start = Date.now();
-      window.location.href = deepLinkUrl;
+  } else if (!ziara) {
+    // Unknown ziarat ID
+    nameEl.textContent  = 'زيارة غير معروفة';
+    divider.style.display = 'block';
+    bodyEl.textContent  = 'لم نتمكن من العثور على هذه الزيارة.';
+    notFound.style.display = 'block';
 
-      // If app opened, the page goes to background and the timer won't fire on time
-      setTimeout(() => {
-        const elapsed = Date.now() - start;
-        // If we're still here after ~1.8s, app wasn't installed
-        if (elapsed < 2500) {
-          if (isIOS) {
-            showStoreRedirect(IOS_STORE_URL, 'App Store');
-          } else {
-            showStoreRedirect(ANDROID_STORE_URL, 'Google Play');
-          }
-        }
-      }, 1800);
-    }
+  } else {
+    // Known ziarat — show name and CTA
+    nameEl.textContent  = ziara.name;
+    labelEl.textContent = 'استمع الآن';
+    divider.style.display = 'block';
 
-    // ── Main logic ──
-    if (!isMobile) {
-      // Desktop: show store links
-      statusEl.textContent = 'Available on iOS & Android';
-      desktopMsg.style.display = 'flex';
+    const hasYoutube = ziara.youtube && !ziara.youtube.startsWith('PLACEHOLDER');
 
+    if (hasYoutube) {
+      bodyEl.textContent = 'اضغط على الزر أدناه للاستماع على يوتيوب.';
+      ctaBtn.href        = ziara.youtube;
+      ctaWrap.style.display = 'block';
     } else {
-      // Mobile: set correct store button as fallback first
-      const storeUrl   = isIOS ? IOS_STORE_URL : ANDROID_STORE_URL;
-      const storeLabel = isIOS ? 'App Store' : 'Google Play';
-      storeBtn.href    = storeUrl;
-      storeBtnLabel.textContent = `Get Shagaf on ${storeLabel}`;
-      mobileActions.style.display = 'flex';
-
-      // Try opening the app after a short delay (let page render first)
-      setTimeout(tryOpenApp, 600);
+      bodyEl.textContent = 'هذه الزيارة ستكون متاحة على يوتيوب قريباً.';
+      notFound.style.display = 'block';
     }
-  </script>
-
+  }
+</script>
 </body>
 </html>
